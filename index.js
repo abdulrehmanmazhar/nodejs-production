@@ -1,1 +1,0 @@
-console.log("This is a production grade Nodejs template setup project")
