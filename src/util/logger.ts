@@ -5,6 +5,8 @@ import config from '../config/config.js'
 import { EApplicationEnvironment } from '../constant/application.js'
 import path from 'path'
 import { blue, green, magenta, red, yellow } from 'colorette'
+import 'winston-mongodb'
+import type { MongoDBTransportInstance } from 'winston-mongodb'
 
 // colorize terminal
 const colorizeLevel = (level: string) => {
@@ -85,9 +87,22 @@ const fileTransport = (): Array<FileTransportInstance> => {
     ]
 }
 
+const mongoDBTransport = (): Array<MongoDBTransportInstance> => {
+    return [
+        new transports.MongoDB({
+            level: 'info',
+            db: config.DATABASE_URL as string,
+            metaKey: 'meta',
+            expireAfterSeconds: 2592000, // 30 days
+            collection: 'app-logs'
+            // format: format.combine(format.timestamp(), fileLogFormat)
+        })
+    ]
+}
+
 export default createLogger({
     defaultMeta: {
         meta: {}
     },
-    transports: [...consoleTransport(), ...fileTransport()]
+    transports: [...consoleTransport(), ...fileTransport(), ...mongoDBTransport()]
 })

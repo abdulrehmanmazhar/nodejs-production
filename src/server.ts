@@ -12,7 +12,8 @@ const main = async () => {
 
         logger.info(`DATABASE CONNECTED`, {
             meta: {
-                DATABASE_NAME: connect
+                DATABASE_NAME: connect,
+                TYPE: 'mongodb'
             }
         })
 
