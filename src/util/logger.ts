@@ -4,23 +4,38 @@ import util from 'util'
 import config from '../config/config.js'
 import { EApplicationEnvironment } from '../constant/application.js'
 import path from 'path'
+import { blue, green, magenta, red, yellow } from 'colorette'
 
+// colorize terminal
+const colorizeLevel = (level: string) => {
+    switch (level) {
+        case 'ERROR':
+            return red(level)
+        case 'WARN':
+            return yellow(level)
+        case 'INFO':
+            return blue(level)
+        default:
+            return level
+    }
+}
+
+// console functions
 const consoleLogFormat = format.printf((info) => {
     const { timestamp, level, message, meta = {} } = info
 
-    const customLevel = level.toUpperCase()
-    const customTimestamp = timestamp as string
+    const customLevel = colorizeLevel(level.toUpperCase())
+    const customTimestamp = green(timestamp as string)
     const customMessage = message as string
     const customMeta = util.inspect(meta, {
         showHidden: false,
         depth: null
     })
 
-    const customLog = `${customLevel} [${customTimestamp}] ${customMessage}\n${'META'} ${customMeta}\n `
+    const customLog = `${customLevel} [${customTimestamp}] ${customMessage}\n${magenta('META')} ${customMeta}\n `
 
     return customLog
 })
-
 const consoleTransport = (): Array<ConsoleTransportInstance> => {
     if (config.ENV === EApplicationEnvironment.DEVELOPMENT) {
         return [
@@ -33,6 +48,7 @@ const consoleTransport = (): Array<ConsoleTransportInstance> => {
     return []
 }
 
+// file functions
 const fileLogFormat = format.printf((info) => {
     const { timestamp, level, message, meta = {} } = info
 
